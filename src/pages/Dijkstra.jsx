@@ -1,13 +1,36 @@
+import AlgorithmLayout from "../components/AlgorithmLayout";
+
 export default function Dijkstra() {
     return (
-        <div className="min-h-screen px-6 py-10">
-            <div className="mx-auto max-w-6xl">
-                <h1 className="text-2xl font-bold">Dijkstra's Visualisation</h1>
-                <p className="mt-2 text-gray-700">
-                    This is the Dijstra prototype page.
-                    Implementation of visualisation TBC
-                </p>
-            </div>
-        </div>
+        <AlgorithmLayout
+            title="Dijkstra's Shortest Path Algorithm"
+            leftPanel={
+                <div>
+                    <h2 className="mb-2 font-semibold">Algorithm Info</h2>
+                    <p className="text-sm text-gray-600">
+                        Information about Dijkstra's algorithm will go here.
+                    </p>
+                </div>
+            }
+            visualisation={
+                <div className="flex h-full items-center justfify-centre text-gray-500">
+                    Graph Visualisation Area
+                </div>
+            }
+            rightPanel={
+                <div>
+                    <h2 className="mb-2 font-semibold">Metrics</h2>
+                    <p className="text-sm text-gray-600">
+                        Runtime metrics and step explanations will appear here.
+                    </p>
+                </div>
+            }
+            controls={
+                <div className="flex items-center justify-between text-sm">
+                    <span>Controls placeholder</span>
+                    <span>Step: 0 / 0</span>
+                </div>
+            }
+        />
     );
 }
