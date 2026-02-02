@@ -30,15 +30,15 @@ function Dropdown({ label, items }) {
         {label} <span className="ml-1">▾</span>
       </button>
 
-      <div className="absolute left-0 z-50 mt-2 hidden w-48 rounded-md border bg-white p-1 shadow-lg group-hover:block">
+      <div className="absolute left-0 z-50 mt-0 hidden w-48 rounded-md border bg-white p-1 shadow-lg group-hover:block">
         {items.map((item) => (
-          <Link
-            key={item.label}
-            to={item.to}
-            className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          >
+            <Link
+                key={item.label}
+                to={item.to}
+                className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
             {item.label}
-          </Link>
+            </Link>
         ))}
       </div>
     </div>
@@ -68,13 +68,13 @@ export default function Navbar() {
 
   return (
     <header className="border-b bg-white">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-full items-center justify-between px-20 py-4">
 
-        <Link to="/" className="flex items-center gap-2 font-semibold">
+        <Link to="/" className="flex items-center gap-8 text-xl font-bold">
           <span>AlgoLearn</span>
         </Link>
 
-        <nav className="flex items-center gap-2">
+        <nav className="flex items-center gap-10">
           <NavItem to="/">Home</NavItem>
           <Dropdown label="Graph Pathfinding" items={graphItems} />
           <Dropdown label="Sorting" items={sortingItems} />
