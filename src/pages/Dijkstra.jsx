@@ -31,7 +31,7 @@ export default function Dijkstra() {
                             onChange={(e) => setStartId(e.target.value)}
                         >
                             {graph.nodes.map((node) => (
-                                <option key={node.id} value={node.id}>
+                                <option key={node.id} value={node.id} disabled={node.id === endId}>
                                 {node.id}
                                 </option>
                             ))}
@@ -46,7 +46,7 @@ export default function Dijkstra() {
                             onChange={(e) => setEndId(e.target.value)}
                         >
                             {graph.nodes.map((node) => (
-                                <option key={node.id} value={node.id}>
+                                <option key={node.id} value={node.id} disabled={node.id === startId}>
                                 {node.id}
                                 </option>
                             ))}
