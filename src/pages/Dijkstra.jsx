@@ -2,12 +2,16 @@ import { useState } from "react";
 import AlgorithmLayout from "../components/AlgorithmLayout";
 import GraphRenderer from "../features/dijkstra/GraphRenderer";
 import { defaultGraph } from "../features/dijkstra/data/graphs";
+import { generateDijkstraSteps } from "../features/dijkstra/logic/dijkstraSteps";
 
 export default function Dijkstra() {
 
     const [graph] = useState(defaultGraph);
     const [startId, setStartId] = useState(graph.startId);
     const [endId, setEndId] = useState(graph.endId);
+    
+    const steps = generateDijkstraSteps(graph, startId, endId);
+    console.log("Dijkstra's steps: ", steps);
 
     return (
         <AlgorithmLayout
