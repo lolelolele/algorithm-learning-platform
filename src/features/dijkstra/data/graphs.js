@@ -2,12 +2,12 @@ export const defaultGraph = {
     id: "custom-default",
     name: "Custom (Default)",
     nodes: [
-        { id:"A", x: 120, y: 120 },
-        { id:"B", x: 280, y: 70 },
-        { id:"C", x: 280, y: 170 },
-        { id:"D", x: 460, y: 110 },
-        { id:"E", x: 620, y: 70 },
-        { id:"F", x: 620, y: 170 },
+        { id:"A", x: 80, y: 150 },
+        { id:"B", x: 280, y: 20 },
+        { id:"C", x: 280, y: 280 },
+        { id:"D", x: 460, y: 20 },
+        { id:"E", x: 460, y: 280 },
+        { id:"F", x: 660, y: 150 },
     ],
     edges: [
         { id: "A-B", from: "A", to: "B", weight: 4 },

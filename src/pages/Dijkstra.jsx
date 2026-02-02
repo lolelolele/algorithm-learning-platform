@@ -1,4 +1,6 @@
 import AlgorithmLayout from "../components/AlgorithmLayout";
+import GraphRenderer from "../features/dijkstra/GraphRenderer";
+import { defaultGraph } from "../features/dijkstra/data/graphs";
 
 export default function Dijkstra() {
     return (
@@ -12,9 +14,7 @@ export default function Dijkstra() {
                 </div>
             }
             visualisation={
-                <div className="flex h-full items-center justfify-centre text-gray-500">
-                    Graph Visualisation Area
-                </div>
+                <GraphRenderer graph={defaultGraph} />
             }
             rightPanel={
                 <div>
