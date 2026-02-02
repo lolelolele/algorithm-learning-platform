@@ -6,7 +6,6 @@ export default function Dijkstra() {
             title="Dijkstra's Shortest Path Algorithm"
             leftPanel={
                 <div>
-                    <h2 className="mb-2 font-semibold">Algorithm Info</h2>
                     <p className="text-sm text-gray-600">
                         Information about Dijkstra's algorithm will go here.
                     </p>
@@ -19,7 +18,6 @@ export default function Dijkstra() {
             }
             rightPanel={
                 <div>
-                    <h2 className="mb-2 font-semibold">Metrics</h2>
                     <p className="text-sm text-gray-600">
                         Runtime metrics and step explanations will appear here.
                     </p>

@@ -4,36 +4,68 @@ export default function AlgorithmLayout({
     visualisation,
     rightPanel,
     controls,
+    graphEditor,
+    whyThisStep,
 }) {
     return (
-        <div className="min-h-screen bg-gray-50">
-            {/*Algorithm page header*/}
-            <header className="border-b bg-white px-6 py-4">
-                <h1 className="text-xl font-bold">{title}</h1>
-            </header>
+        <div className="h-[calc(100vh-80px)] bg-gray-50 flex flex-col overflow-hidden">
 
             {/*Main content area*/}
-            <main className="mx-auto grid max-w-7xl grid-cols-12 gap-4 px-6 py-6">
-                {/*Left panel*/}
-                <aside className="col-span-3 rounded-md border bg-white p-4">
-                    {leftPanel}
-                </aside>
-
-                {/*Visualisation area*/}
-                <section className="col-span-6 rounded-md border bg-white p-4">
-                    {visualisation}
+            <main className="flex-1 w-full max-w-full px-8 py-6 flex flex-col gap-6 min-h-0">
+                
+                {/*Algorithm page header*/}
+                <section className="rounded-md border bg-white p-4 h-20 flex-shrink-0 flex items-center justify-center">
+                    <h1 className="text-xl font-bold">{title}</h1>
                 </section>
+                
+                <div className="flex-1 grid grid-cols-12 grid-rows-2 gap-6 min-h-0">
+                    {/*Left panels*/}
+                    <div className="col-span-3 row-span-2 flex flex-col gap-6">
+                        
+                        {/*Algorithm Info Panel*/}
+                        <aside className="flex-1 rounded-md border bg-white p-4 overflow-auto">
+                            <h2 className="mb-2 font-semibold">Algorithm Info</h2>
+                            {leftPanel}
+                        </aside>
 
-                {/*Right Panel*/}
-                <section className="col-span-3 rounded-md border bg-white p-4">
-                    {rightPanel}
-                </section>
+                        {/*Graph Editor panel*/}
+                        <aside className="flex-1 rounded-md border bg-white p-4 overflow-auto">
+                            <h2 className="mb-2 font-semibold">Graph Editor</h2>
+                            {graphEditor}
+                        </aside>
+                    </div>
+
+                    {/*Visualisation area*/}
+                    <section className="col-span-6 row-span-2 rounded-md border bg-white flex flex-col overflow-hidden">
+                        <div className="flex-1 p-4 overflow-auto">
+                            {visualisation}
+                        </div>
+
+                        <div className="border-t"></div>
+
+                        <div className="p-4 h-20 flex-shrink-0">
+                            {controls}
+                        </div>
+                        
+                    </section>
+
+                    {/*Right Panels*/}
+                    <div className="col-span-3 row-span-2 flex flex-col gap-6">
+
+                        {/*Metrics Panel*/}
+                        <section className="flex-1 rounded-md border bg-white p-4 overflow-auto">
+                            <h2 className="mb-2 font-semibold">Metrics</h2>
+                            {rightPanel}
+                        </section>
+
+                        {/*Why This Step Panel*/}
+                        <section className="flex-1 rounded-md border bg-white p-4 overflow-auto">
+                            <h2 className="mb-2 font-semibold">Why this step?</h2>
+                            {whyThisStep}
+                        </section>
+                    </div>
+                </div>
             </main>
-
-            {/*Bottom control bar*/}
-            <footer className="border-t bg-white px-6 py-4">
-                {controls}
-            </footer>
         </div>
     );
 }
