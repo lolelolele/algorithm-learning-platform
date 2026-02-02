@@ -1,5 +1,9 @@
-export default function GraphRenderer({ graph, startId, endId }) {
+export default function GraphRenderer({ graph, startId, endId, step }) {
     const { nodes, edges } = graph;
+    const visitedSet = new Set(step?.visited ?? []);
+    const frontierSet = new Set(step?.frontier ?? []);
+    const currentNode = step?.currentNode ?? null;
+    const activeEdgeId = step?.activeEdge ?? null;
 
     return (
         <svg
@@ -24,6 +28,8 @@ export default function GraphRenderer({ graph, startId, endId }) {
                 const labelX = isVertical ? midX + 15 : midX;
                 const labelY = isVertical ? midY : midY - 10;
 
+                const isActive = edge.id === activeEdgeId;
+
                 return (
                     <g key={edge.id}>
                         <line
@@ -31,8 +37,8 @@ export default function GraphRenderer({ graph, startId, endId }) {
                             y1={from.y}
                             x2={to.x}
                             y2={to.y}
-                            stroke="#9ca3af"
-                            strokeWidth="3"
+                            stroke={isActive ? "#111827" : "#9ca3af"}
+                            strokeWidth={isActive ? "6" : "3"}
                         />
                         <text
                             x={labelX}
@@ -51,6 +57,32 @@ export default function GraphRenderer({ graph, startId, endId }) {
             {nodes.map((node) => {
                 const isStart = node.id === startId;
                 const isEnd = node.id === endId;
+                const isCurrent = node.id === currentNode;
+                const isVisited = visitedSet.has(node.id);
+                const isFrontier = frontierSet.has(node.id)
+
+                //visual priority
+                let fill = "#ffffff";
+                let stroke = "#111827";
+                let strokeWidth = 3;
+
+                if (isCurrent) {
+                    fill = "#fef9c3";  //light yellow
+                    stroke = "#000000";
+                    strokeWidth = 5;
+                } else if (isStart) {
+                    fill = "#dcfce7";  //light green
+                    stroke = "#16a34a";
+                } else if (isEnd) {
+                    fill = "#fee2e2";  //light red
+                    stroke = "#dc2626";
+                } else if (isVisited) {
+                    fill = "#e5e7eb";  //light gray
+                    stroke = "#374151";
+                } else if (isFrontier) {
+                    fill = "#dbeafe";  //light red
+                    stroke = "#374151";
+                }
                 
                 return (
                 <g key={node.id}>
@@ -58,10 +90,12 @@ export default function GraphRenderer({ graph, startId, endId }) {
                         cx={node.x}
                         cy={node.y}
                         r="28"
-                        fill={isStart ? "#dcfce7" : isEnd ? "#fee2e2" : "#ffffff"}
-                        stroke={isStart ? "#16a34a" : isEnd ? "#dc2626" : "#111827"}
-                        strokeWidth="3"
+                        fill={fill}
+                        stroke={stroke}
+                        strokeWidth={strokeWidth}
                     />
+                    
+                    {/* node label */}
                     <text
                         x={node.x}
                         y={node.y + 5}
@@ -70,8 +104,9 @@ export default function GraphRenderer({ graph, startId, endId }) {
                         textAnchor="middle"
                         fill="#111827"
                     >
-                    {node.id}
+                        {node.id}
                     </text>
+
                 </g>
                 );
             })}

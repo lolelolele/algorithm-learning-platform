@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AlgorithmLayout from "../components/AlgorithmLayout";
 import GraphRenderer from "../features/dijkstra/GraphRenderer";
 import { defaultGraph } from "../features/dijkstra/data/graphs";
@@ -9,9 +9,15 @@ export default function Dijkstra() {
     const [graph] = useState(defaultGraph);
     const [startId, setStartId] = useState(graph.startId);
     const [endId, setEndId] = useState(graph.endId);
-    
+    const [stepIndex, setStepIndex] = useState(0);
+
     const steps = generateDijkstraSteps(graph, startId, endId);
-    console.log("Dijkstra's steps: ", steps);
+    const safeStepIndex = Math.min(stepIndex, steps.length - 1);
+    const currentStep = steps[safeStepIndex];
+
+    useEffect(() => {
+        setStepIndex(0);
+    }, [startId, endId]);
 
     return (
         <AlgorithmLayout
@@ -64,6 +70,7 @@ export default function Dijkstra() {
                     graph={graph} 
                     startId={startId}
                     endId={endId}
+                    step={currentStep}
                 />
             }
 
@@ -85,8 +92,29 @@ export default function Dijkstra() {
 
             controls={
                 <div className="flex items-center justify-between text-sm">
-                    <span>Controls placeholder</span>
-                    <span>Step: 0 / 0</span>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() =>
+                                setStepIndex((i) => Math.max(i - 1, 0))
+                            }
+                            className="rounded-md border px-3 py-1 hover:bg-gray-100"
+                        >
+                            Back
+                        </button>
+
+                        <button
+                            onClick={() =>
+                                setStepIndex((i) => Math.min(i + 1, steps.length - 1))
+                            }
+                            className="rounded-md border px-3 py-1 hover:bg-gray-100"
+                        >
+                            Next
+                        </button>
+                    </div>
+
+                    <span>
+                        Step: {safeStepIndex + 1} / {steps.length}
+                    </span>
                 </div>
             }
         />
