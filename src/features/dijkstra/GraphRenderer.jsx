@@ -1,4 +1,4 @@
-export default function GraphRenderer({ graph }) {
+export default function GraphRenderer({ graph, startId, endId }) {
     const { nodes, edges } = graph;
 
     return (
@@ -48,14 +48,18 @@ export default function GraphRenderer({ graph }) {
             })}
 
             {/*Nodes*/}
-            {nodes.map((node) => (
+            {nodes.map((node) => {
+                const isStart = node.id === startId;
+                const isEnd = node.id === endId;
+                
+                return (
                 <g key={node.id}>
                     <circle
                         cx={node.x}
                         cy={node.y}
                         r="28"
-                        fill="#ffffff"
-                        stroke="#111827"
+                        fill={isStart ? "#dcfce7" : isEnd ? "#fee2e2" : "#ffffff"}
+                        stroke={isStart ? "#16a34a" : isEnd ? "#dc2626" : "#111827"}
                         strokeWidth="3"
                     />
                     <text
@@ -69,7 +73,8 @@ export default function GraphRenderer({ graph }) {
                     {node.id}
                     </text>
                 </g>
-            ))}
+                );
+            })}
         </svg>
     );
 }

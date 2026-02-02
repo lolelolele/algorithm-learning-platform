@@ -1,8 +1,8 @@
 export default function AlgorithmLayout({
     title,
-    leftPanel,
+    algoInfo,
     visualisation,
-    rightPanel,
+    metrics,
     controls,
     graphEditor,
     whyThisStep,
@@ -25,7 +25,7 @@ export default function AlgorithmLayout({
                         {/*Algorithm Info Panel*/}
                         <aside className="flex-1 rounded-md border bg-white p-4 overflow-auto">
                             <h2 className="mb-2 font-semibold">Algorithm Info</h2>
-                            {leftPanel}
+                            {algoInfo}
                         </aside>
 
                         {/*Graph Editor panel*/}
@@ -55,7 +55,7 @@ export default function AlgorithmLayout({
                         {/*Metrics Panel*/}
                         <section className="flex-1 rounded-md border bg-white p-4 overflow-auto">
                             <h2 className="mb-2 font-semibold">Metrics</h2>
-                            {rightPanel}
+                            {metrics}
                         </section>
 
                         {/*Why This Step Panel*/}
