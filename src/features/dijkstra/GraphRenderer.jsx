@@ -9,7 +9,7 @@ export default function GraphRenderer({ graph, startId, endId, step }) {
         <svg
             width="100%"
             height="100%"
-            viewBox="-30 0 800 300"
+            viewBox="-50 0 900 320"
             className="bg-white"
         >
             {/*Edges*/}

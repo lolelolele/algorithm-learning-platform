@@ -113,6 +113,16 @@ export default function Dijkstra() {
                                     ))}
                             </optgroup>
 
+                            <optgroup label="Dense">
+                                {templates
+                                    .filter(t => t.category === "Dense")
+                                    .map(t => (
+                                        <option key={t.id} value={t.id}>
+                                            {t.name}
+                                        </option>
+                                    ))}
+                            </optgroup>
+
                         </select>
                     </div>
 
