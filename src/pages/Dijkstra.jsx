@@ -75,17 +75,34 @@ export default function Dijkstra() {
             }
 
             metrics={
-                <div>
-                    <p className="text-sm text-gray-600">
-                        Runtime metrics and step explanations will appear here.
-                    </p>
+                <div className="space-y-4 text-sm text-gray-700">
+                    <div>
+                        <h3 className="font-medium">Complexity</h3>
+                        <ul className="mt-2 space-y-1 text-gray-600">
+                            <li>Time: O((V + E) log V)</li>
+                            <li>Space: O(V+E)</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 className="font-medium">Live Counters</h3>
+                        <ul className="mt-2 space-y-1 text-gray-600">
+                            <li>Node visits: {currentStep?.counters?.nodeVisits ?? 0}</li>
+                            <li>Relax attempts: {currentStep?.counters?.relaxAttempts ?? 0}</li>
+                            <li>Successful relaxations: {currentStep?.counters?.successfulRelaxations ?? 0}</li>
+                        </ul>
+                    </div>
                 </div>
             }
 
             whyThisStep={
-                <div>
-                    <p className="text-sm text-gray-600">
-                        Explanations of each step will be displayed here.
+                <div className="text-sm text-gray-700 space-y-2">
+                    <div className="text-xs text-gray-500">
+                        Phase: {currentStep?.phase ?? "-"}
+                    </div>
+
+                    <p className="leading-relaxed">
+                        {currentStep?.explanation ?? "No explanation available for this step yet."}
                     </p>
                 </div>
             }
