@@ -64,7 +64,7 @@ export default function Dijkstra() {
                 <div className="space-y-4 text-sm">
 
                     <div>
-                        <label className="block font-medium mb-1">Graph Template</label>
+                        <label className="block font-medium mb-1">Graph Templates:</label>
 
                         <select 
                             className="w-full rounded-md border p-2" 
@@ -103,11 +103,21 @@ export default function Dijkstra() {
                                     ))}
                             </optgroup>
 
+                            <optgroup label="Medium">
+                                {templates
+                                    .filter(t => t.category === "Medium")
+                                    .map(t => (
+                                        <option key={t.id} value={t.id}>
+                                            {t.name}
+                                        </option>
+                                    ))}
+                            </optgroup>
+
                         </select>
                     </div>
 
                     <div>
-                        <label className="block font-medium mb-1">Start Node</label>
+                        <label className="block font-medium mb-1">Start Node:</label>
                         <select
                             className="w-full rounded-md border p-2"
                             value={startId}
@@ -122,7 +132,7 @@ export default function Dijkstra() {
                     </div>
 
                     <div>
-                        <label className="block font-medium mb-1">End Node</label>
+                        <label className="block font-medium mb-1">End Node:</label>
                         <select
                             className="w-full rounded-md border p-2"
                             value={endId}
