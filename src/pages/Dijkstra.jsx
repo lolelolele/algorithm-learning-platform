@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import AlgorithmLayout from "../components/AlgorithmLayout";
 import GraphRenderer from "../features/dijkstra/GraphRenderer";
-import { defaultGraph } from "../features/dijkstra/data/graphs";
+import { defaultGraph, templates } from "../features/dijkstra/data/graphs";
 import { generateDijkstraSteps } from "../features/dijkstra/logic/dijkstraSteps";
 import playIcon from "../assets/icons/play.png";
 import pauseIcon from "../assets/icons/pause.png";
@@ -12,7 +12,9 @@ import resetIcon from "../assets/icons/reset.png";
 
 export default function Dijkstra() {
 
-    const [graph] = useState(defaultGraph);
+    const [graph, setGraph] = useState(defaultGraph);
+    const [selectedTemplateId, setSelectedTemplateId] = useState("custom");
+
     const [startId, setStartId] = useState(graph.startId);
     const [endId, setEndId] = useState(graph.endId);
     const [stepIndex, setStepIndex] = useState(0);
@@ -60,6 +62,50 @@ export default function Dijkstra() {
 
             graphEditor={
                 <div className="space-y-4 text-sm">
+
+                    <div>
+                        <label className="block font-medium mb-1">Graph Template</label>
+
+                        <select 
+                            className="w-full rounded-md border p-2" 
+                            value={selectedTemplateId}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                setSelectedTemplateId(value);
+
+                                setIsPlaying(false);
+                                setStepIndex(0);
+
+                                if (value === "custom") {
+                                    setGraph(defaultGraph);
+                                    setStartId(defaultGraph.startId);
+                                    setEndId(defaultGraph.endId);
+                                } else {
+                                    const selected = templates.find(t => t.id ===value);
+                                    if (selected) {
+                                        setGraph(selected);
+                                        setStartId(selected.startId);
+                                        setEndId(selected.endId);
+                                    }
+                                }
+                            }}
+
+                        >
+                            <option value="custom">Custom (Default)</option>
+
+                            <optgroup label="Simple">
+                                {templates
+                                    .filter(t => t.category === "Simple")
+                                    .map(t => (
+                                        <option key={t.id} value={t.id}>
+                                            {t.name}
+                                        </option>
+                                    ))}
+                            </optgroup>
+
+                        </select>
+                    </div>
+
                     <div>
                         <label className="block font-medium mb-1">Start Node</label>
                         <select
