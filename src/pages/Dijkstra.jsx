@@ -3,6 +3,12 @@ import AlgorithmLayout from "../components/AlgorithmLayout";
 import GraphRenderer from "../features/dijkstra/GraphRenderer";
 import { defaultGraph } from "../features/dijkstra/data/graphs";
 import { generateDijkstraSteps } from "../features/dijkstra/logic/dijkstraSteps";
+import playIcon from "../assets/icons/play.png";
+import pauseIcon from "../assets/icons/pause.png";
+import stepForwardIcon from "../assets/icons/step_forward.png";
+import stepBackwardIcon from "../assets/icons/step_backward.png";
+import resetIcon from "../assets/icons/reset.png";
+
 
 export default function Dijkstra() {
 
@@ -15,9 +21,30 @@ export default function Dijkstra() {
     const safeStepIndex = Math.min(stepIndex, steps.length - 1);
     const currentStep = steps[safeStepIndex];
 
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [speed, setSpeed] = useState(1)
+
+
     useEffect(() => {
+        setIsPlaying(false);
         setStepIndex(0);
     }, [startId, endId]);
+
+    useEffect(() => {
+        if (!isPlaying) return;
+
+        //stops autoplay when last step has been reached
+        if (safeStepIndex >= steps.length - 1) {
+            setIsPlaying(false);
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            setStepIndex((i) => Math.min(i + 1, steps.length - 1));
+        }, 700/speed);
+
+        return () => clearTimeout(timer);
+    }, [isPlaying, speed, safeStepIndex, steps.length]);
 
     return (
         <AlgorithmLayout
@@ -108,31 +135,107 @@ export default function Dijkstra() {
             }
 
             controls={
-                <div className="flex items-center justify-between text-sm">
-                    <div className="flex gap-2">
+
+                <div className="flex items-center justify-between gap-4">
+                    
+                    {/*Left control panel buttons*/}
+                    <div className="flex items-center gap-2">
+                        {/*Step Backwards button*/}
                         <button
-                            onClick={() =>
-                                setStepIndex((i) => Math.max(i - 1, 0))
-                            }
-                            className="rounded-md border px-3 py-1 hover:bg-gray-100"
+                            type="button"
+                            title="Step Backward"
+                            aria-label="Step Backward"
+                            disabled={safeStepIndex === 0}
+                            onClick={() => {
+                                setIsPlaying(false);
+                                setStepIndex((i) => Math.max(i - 1, 0));
+                            }}
+                            className="rounded-md border px-3 py-1 hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-white text-lg"
                         >
-                            Back
+                            <img 
+                            src={stepBackwardIcon} 
+                            alt="Step Back"
+                            className="h-6 w-5"
+                            />
                         </button>
 
+                        {/*Play and pause button*/}
                         <button
-                            onClick={() =>
-                                setStepIndex((i) => Math.min(i + 1, steps.length - 1))
-                            }
-                            className="rounded-md border px-3 py-1 hover:bg-gray-100"
+                            type="button"
+                            title={isPlaying ? "Pause" : "Play"}
+                            aria-label={isPlaying ? "Pause" : "Play"}
+                            disabled={steps.length <= 1}
+                            onClick={() => setIsPlaying((p) => !p)}
+                            className="rounded-md border px-3 py-1 hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-white text-lg"
                         >
-                            Next
+                            <img 
+                            src={isPlaying ? pauseIcon : playIcon} 
+                            alt={isPlaying ? "Pause" : "Play"} 
+                            className="h-6 w-5"
+                            />
+                        </button>
+
+                        {/*Step Forward button*/}
+                        <button
+                            type="button"
+                            title="Step Forward"
+                            aria-label="Step Back"
+                            disabled={safeStepIndex >= steps.length - 1}
+                            onClick={() => {
+                                setIsPlaying(false);
+                                setStepIndex((i) => Math.min(i + 1, steps.length - 1));
+                            }}
+                            className="rounded-md border px-3 py-1 hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-white text-lg"
+                        >
+                            <img 
+                            src={stepForwardIcon} 
+                            alt="Step Forward"
+                            className="h-6 w-5"
+                            />
+                        </button>
+
+                        {/*Reset button*/}
+                        <button
+                            type="button"
+                            title="Reset"
+                            aria-label="Reset"
+                            onClick={() => {
+                                setIsPlaying(false);
+                                setStepIndex(0);
+                            }}
+                            className="rounded-md border px-3 py-1 hover:bg-gray-100 text-lg"
+                        >
+                            <img 
+                            src={resetIcon} 
+                            alt="Reset"
+                            className="h-6 w-5"
+                            />
                         </button>
                     </div>
 
-                    <span>
+                    {/*Middle control panel: speed slider*/}
+                    <div className="flex items-center gap-3">
+                        <span>Speed: </span>
+
+                        <input
+                            type="range"
+                            min="0.25"
+                            max="2"
+                            step="0.25"
+                            value={speed}
+                            onChange={(e) => setSpeed(Number(e.target.value))}
+                            className="w-40"
+                        />
+
+                        <span className="text-xs text-gray-500">{speed}x</span>
+                    </div>
+
+                    {/*Right control panel: step counter*/}
+                    <div className="text-gray-700">
                         Step: {safeStepIndex + 1} / {steps.length}
-                    </span>
+                    </div>
                 </div>
+                
             }
         />
     );
