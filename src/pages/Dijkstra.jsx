@@ -53,10 +53,40 @@ export default function Dijkstra() {
             title="Dijkstra's Shortest Path Algorithm"
 
             algoInfo={
-                <div>
-                    <p className="text-sm text-gray-600">
-                        Information about Dijkstra's algorithm will go here.
-                    </p>
+                <div className="space-y-4 text-sm text-gray-700 leading-relaxed">
+
+                    {/*dijkstra description*/}
+                    <div>
+                        <h3 className="font-medium mb-1">Description</h3>
+                            <p className="text-sm text-gray-600">
+                                Dijkstra's algorithm is a greedy algorithm that is used to find the shortest distance from
+                                the starting node to the end node in a weighted graph with edge weights. 
+                            </p>
+                    </div>
+
+                    <div>
+                        <h3 className="font-medium mb-1">How it works</h3>
+                        <ul className="list-disc ml-5 space-y-1 text-gray-600">
+                            <li>Initialise all node distances to infinity, except the start node (0).</li>
+                            <li>Maintain a priority queue of frontier nodes.</li>
+                            <li>Repeatedly select the node with the smallest tentative distance.</li>
+                            <li>Relax outgoing edges by checking if a shorter path exists.</li>
+                            <li>Mark nodes as visited once their shortest distance is known.</li>
+                            <li>Continue until all reachable nodes are processed or the target is reached.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 className="font-medium mb-1">Complexity</h3>
+                        <ul className="list-disc ml-5 space-y-1 text-gray-600">
+                            <li>
+                                <span classname="font-medium">Time:</span> O((V + E) log V) 
+                            </li>
+                            <li>
+                                <span>Space:</span> O(V + E)
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             }
 
@@ -172,20 +202,17 @@ export default function Dijkstra() {
                     <div>
                         <h3 className="font-medium mb-2">Frontier</h3>
 
-                        <div>
-                            <h3 className="font-medium mb-1">Frontier:</h3>
-
-                            <div className="rounded-md border bg-white p-2 text-gray-700">
-                                {currentStep?.pq?.length
-                                    ? currentStep.pq
-                                        .map(
-                                            (item) =>
-                                                `${item.id}(${item.dist === Infinity ? "∞" : item.dist})`
-                                        )
-                                        .join(", ")
-                                    : "Empty"}
-                            </div>
+                        <div className="rounded-md border bg-white p-2 text-gray-700">
+                            {currentStep?.pq?.length
+                                ? currentStep.pq
+                                    .map(
+                                        (item) =>
+                                            `${item.id}(${item.dist === Infinity ? "∞" : item.dist})`
+                                    )
+                                    .join(", ")
+                                : "Empty"}
                         </div>
+                    
                     </div>
 
                     <div>
