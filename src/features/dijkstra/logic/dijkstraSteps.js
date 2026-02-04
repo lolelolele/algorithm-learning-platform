@@ -35,6 +35,13 @@ function pathNodesToEdgeIds(pathNodes, edges) {
     return edgeIds;
 }
 
+function formatFrontier(pq) {
+    if (!pq || pq.length === 0) return "null";
+    
+    const copy = [...pq].sort((a, b) => a.dist - b.dist);
+    return copy.map((n) => `${n.id}(${n.dist})`).join(", ");
+}
+
 export function generateDijkstraSteps(graph, startId, endId) {
     const steps = [];
 
@@ -65,11 +72,16 @@ export function generateDijkstraSteps(graph, startId, endId) {
         phase: "init",
         currentNode: null,
         visited: [],
-        frontier: [startId],
+        frontier: pq.map((n) => n.id),
+        frontierWithDist: formatFrontier(pq),
         dist: { ...dist },
         prev: { ...prev },
         activeEdge: null,
-        explanation: `Initialise all distances to infinity except start node ${startId}, which is set to 0.`,
+        explanationParts:{
+            rule: "Initialise tentative distances",
+            reason: "At the start, we assume all nodes are unreachable (∞) until proven otherwise.",
+            effect: `Set dist [${startId}] = 0 because the start node is distance 0 from itself.`, 
+        },
         counters: { ...counters },
     });
 
@@ -88,13 +100,19 @@ export function generateDijkstraSteps(graph, startId, endId) {
             currentNode: current,
             visited: Array.from(visited),
             frontier: pq.map((n) => n.id),
+            frontierWithDist: formatFrontier(pq),
             dist: { ...dist },
             prev: { ...prev },
             activeEdge: null,
-            explanation: `Select node ${current} as it has the smallest tentative distance.`,
+            explanationParts:{
+                rule: "Pick the frontier node with the smallest tentative distance",
+                reason: "With non-negative weights, the smallest tentative distance is guaranteed to be final (greedy choice).",
+                effect: `Node ${current} becomes 'visited' (finalised). We now relax its outgoing edges.`, 
+            },
             counters: { ...counters },
         });
 
+        //early exit if we reached end
         if (current === endId) break;
 
         //relax outgoing edges
@@ -103,28 +121,35 @@ export function generateDijkstraSteps(graph, startId, endId) {
         );
 
         for(const edge of outgoing) {
-            const neighbour =
-                edge.from === current ? edge.to : edge.from;
+            const neighbour = edge.from === current ? edge.to : edge.from;
             
             if (visited.has(neighbour)) continue;
         
             counters.relaxAttempts++;
+
+            const oldDist = dist[neighbour];
+            const newDist = dist[current] + edge.weight;
 
             steps.push({
                 phase: "relax-edge",
                 currentNode: current,
                 visited: Array.from(visited),
                 frontier: pq.map((n) => n.id),
+                frontierWithDist: formatFrontier(pq),
                 dist: { ...dist },
                 prev: { ...prev },
                 activeEdge: edge.id,
-                explanation: `Check edge ${current} -> ${neighbour} with weight ${edge.weight}.`,
+                explanationParts:{
+                    rule: "Relaxation check",
+                    reason: "Try to improve the best known distance to a neighbour using the current node.",
+                    effect: `Try ${current} -> ${neighbour}: ${dist[current]} + ${edge.weight} = ${newDist} (current best: ${oldDist === Infinity ? "∞" : oldDist}).`, 
+                },
                 counters: { ...counters },
             });
 
-            const newDist = dist[current] + edge.weight;
-
             if (newDist < dist[neighbour]) {
+
+                //successful relaxation
                 dist[neighbour] = newDist;
                 prev[neighbour] = current;
                 pq.push({ id: neighbour, dist: newDist});
@@ -135,10 +160,33 @@ export function generateDijkstraSteps(graph, startId, endId) {
                     currentNode: current,
                     visited: Array.from(visited),
                     frontier: pq.map((n) => n.id),
+                    frontierWithDist: formatFrontier(pq),
                     dist: { ...dist },
                     prev: { ...prev },
                     activeEdge: edge.id,
-                    explanation: `Update distance of ${neighbour} to ${newDist} via ${current}.`,
+                    explanationParts:{
+                        rule: "Update distance (successful relaxation)",
+                        reason: "We found a shorter path to the neighbour through the current node.",
+                        effect: `Accept the new path. ${neighbour} now has distance ${newDist} via ${current}.`, 
+                    },
+                    counters: { ...counters },
+                });
+            } else {
+                //explicit step for failed relaxation
+                steps.push({
+                    phase: "no-update",
+                    currentNode: current,
+                    visited: Array.from(visited),
+                    frontier: pq.map((n) => n.id),
+                    frontierWithDist: formatFrontier(pq),
+                    dist: { ...dist },
+                    prev: { ...prev },
+                    activeEdge: edge.id,
+                    explanationParts:{
+                        rule: "No update (failed relaxation)",
+                        reason: "The alternative path is not better than the best-known distance.",
+                        effect: `Reject the new path.  ${newDist} is not better than the current distance ${oldDist}.`, 
+                    },
                     counters: { ...counters },
                 });
             }
@@ -154,13 +202,22 @@ export function generateDijkstraSteps(graph, startId, endId) {
         currentNode: endId,
         visited: Array.from(visited),
         frontier: [],
+        frontierWithDist: "null",
         dist: { ...dist },
         prev: { ...prev },
         activeEdge: null, shortestPathNodes, shortestPathEdges,
-        explanation: 
+        explanationParts: 
             shortestPathNodes.length > 0
-                ? `Dijkstra's algorithm has completed. Highlighting the shortest path from ${startId} to ${endId}.`
-                : `Dijkstra's algorithm has completed. No path exists from ${startId} to ${endId}.`,
+                ? {
+                    rule: "Reconstruct the shortest path",
+                    reason: "We stored predecessors (prev during relaxations, so we can backtrack from the end  node.",
+                    effect: `Highlight path ${shortestPathNodes.join("->")}.`,
+                }
+                : {
+                    rule: "Terminate",
+                    reason: "All reachable nodes have been finalised, but the end node was not reachable.",
+                    effect: `No path exists from ${startId} to ${endid}.`,
+                },
         counters: { ...counters },
     });
 

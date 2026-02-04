@@ -189,14 +189,34 @@ export default function Dijkstra() {
             }
 
             whyThisStep={
-                <div className="text-sm text-gray-700 space-y-2">
-                    <div className="text-xs text-gray-500">
-                        Phase: {currentStep?.phase ?? "-"}
+                <div className="text-sm text-gray-700 space-y-3">
+                    <div className="text-xs text-gray-500 space-y-1">
+                        <div>Phase: {currentStep?.phase ?? "-"}</div>
+                        <div>Frontier: {currentStep?.frontierWithDist ?? "null"}</div>
                     </div>
 
-                    <p className="leading-relaxed">
-                        {currentStep?.explanation ?? "No explanation available for this step yet."}
-                    </p>
+                    {currentStep?.explanationParts ?(
+                        <div className="space-y-2 leading relaxed">
+                            <div>
+                                <span className="font-semibold">Rule: </span>
+                                <span>{currentStep.explanationParts.rule}</span>
+                            </div>
+
+                            <div>
+                                <span className="font-semibold">Reason: </span>
+                                <span>{currentStep.explanationParts.reason}</span>
+                            </div>
+
+                            <div>
+                                <span className="font-semibold">Effect: </span>
+                                <span>{currentStep.explanationParts.effect}</span>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="leading relaxed">
+                            {currentStep?.explanation ?? "No explanation available for this step yet."}
+                        </p>
+                    )}
                 </div>
             }
 
