@@ -4,6 +4,8 @@ export default function GraphRenderer({ graph, startId, endId, step }) {
     const frontierSet = new Set(step?.frontier ?? []);
     const currentNode = step?.currentNode ?? null;
     const activeEdgeId = step?.activeEdge ?? null;
+    const shortestPathEdgeSet = new Set(step?.shortestPathEdges ?? []);
+    const shortestPathNodeSet = new Set(step?.shortestPathNodes ?? []);
 
     return (
         <svg
@@ -29,6 +31,20 @@ export default function GraphRenderer({ graph, startId, endId, step }) {
                 const labelY = isVertical ? midY : midY - 10;
 
                 const isActive = edge.id === activeEdgeId;
+                const isOnShortestPath = shortestPathEdgeSet.has(edge.id);
+
+                let stroke = "#9ca3af"
+                let strokeWidth = 3;
+
+                if (isOnShortestPath) {
+                    stroke = "#2563eb"
+                    strokeWidth = 6;
+                }
+
+                if (isActive) {
+                    stroke = "#111827"    //active edge overrides
+                    strokeWidth = 6;
+                }
 
                 return (
                     <g key={edge.id}>
@@ -37,8 +53,8 @@ export default function GraphRenderer({ graph, startId, endId, step }) {
                             y1={from.y}
                             x2={to.x}
                             y2={to.y}
-                            stroke={isActive ? "#111827" : "#9ca3af"}
-                            strokeWidth={isActive ? "6" : "3"}
+                            stroke={stroke}
+                            strokeWidth={strokeWidth}
                         />
                         <text
                             x={labelX}
@@ -60,6 +76,7 @@ export default function GraphRenderer({ graph, startId, endId, step }) {
                 const isCurrent = node.id === currentNode;
                 const isVisited = visitedSet.has(node.id);
                 const isFrontier = frontierSet.has(node.id)
+                const isOnShortestPath = shortestPathNodeSet.has(node.id);
 
                 //visual priority
                 let fill = "#ffffff";
@@ -82,7 +99,12 @@ export default function GraphRenderer({ graph, startId, endId, step }) {
                 } else if (isFrontier) {
                     fill = "#dbeafe";  //light red
                     stroke = "#374151";
+                } else if (isOnShortestPath) {
+                    fill = "#dbeafe";  //light red
+                    stroke = "#2563eb";
+                    strokeWidth = 5;
                 }
+                
                 
                 return (
                 <g key={node.id}>

@@ -1,3 +1,40 @@
+function reconstructPathNodes(prev, startId, endId) {
+    //return empty path if the end is unreachable
+    if (endId !== startId && prev[endId] == null) return [];
+
+    const path = [];
+    let current = endId;
+
+    //walk backwards using previous pointers
+    while (current != null) {
+        path.push(current);
+        if (current === startId) break;
+        current = prev[current];
+    }
+
+    //if start is never reached, it is unreachable
+    if (path[path.length - 1] !== startId) return [];
+
+    return path.reverse();
+}
+
+function pathNodesToEdgeIds(pathNodes, edges) {
+    const edgeIds = [];
+
+    for (let i = 0; i < pathNodes.length - 1; i++) {
+        const a = pathNodes[i];
+        const b = pathNodes[i + 1];
+
+        const e = edges.find(
+            (edge) =>
+                (edge.from === a && edge.to === b) || (edge.from === b && edge.to === a)
+        );
+
+        if (e) edgeIds.push(e.id);
+    }
+    return edgeIds;
+}
+
 export function generateDijkstraSteps(graph, startId, endId) {
     const steps = [];
 
@@ -108,6 +145,9 @@ export function generateDijkstraSteps(graph, startId, endId) {
         }
     }
 
+    const shortestPathNodes = reconstructPathNodes(prev, startId, endId);
+    const shortestPathEdges = pathNodesToEdgeIds(shortestPathNodes, edges);
+
     //final step
     steps.push({
         phase: "final",
@@ -116,8 +156,11 @@ export function generateDijkstraSteps(graph, startId, endId) {
         frontier: [],
         dist: { ...dist },
         prev: { ...prev },
-        activeEdge: null,
-        explanation: `Dijkstra's algorithm has completed. The shortest path to ${endId} has been found`,
+        activeEdge: null, shortestPathNodes, shortestPathEdges,
+        explanation: 
+            shortestPathNodes.length > 0
+                ? `Dijkstra's algorithm has completed. Highlighting the shortest path from ${startId} to ${endId}.`
+                : `Dijkstra's algorithm has completed. No path exists from ${startId} to ${endId}.`,
         counters: { ...counters },
     });
 
