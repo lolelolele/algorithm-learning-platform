@@ -6,6 +6,7 @@ export default function AlgorithmLayout({
     controls,
     graphEditor,
     whyThisStep,
+    metricsControls
 }) {
     return (
         <div className="h-[calc(100vh-80px)] bg-gray-50 flex flex-col overflow-hidden">
@@ -54,7 +55,9 @@ export default function AlgorithmLayout({
 
                         {/*Metrics Panel*/}
                         <section className="flex-1 rounded-md border bg-white p-4 overflow-auto">
-                            <h2 className="mb-2 font-semibold">Metrics</h2>
+                            <div className="mb-2 flex items-center justify-between">
+                                <h2 className="mb-2 font-semibold">Dynamic Info</h2>
+                            </div>
                             {metrics}
                         </section>
 

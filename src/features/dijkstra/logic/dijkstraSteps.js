@@ -36,10 +36,16 @@ function pathNodesToEdgeIds(pathNodes, edges) {
 }
 
 function formatFrontier(pq) {
-    if (!pq || pq.length === 0) return "null";
+    if (!pq || pq.length === 0) return "∅";
     
     const copy = [...pq].sort((a, b) => a.dist - b.dist);
     return copy.map((n) => `${n.id}(${n.dist})`).join(", ");
+}
+
+function snapshotPQ(pq) {
+    return[...pq]
+        .sort((a, b) => a.dist - b.dist)
+        .map((x) => ({ id: x.id, dist:x.dist }));
 }
 
 export function generateDijkstraSteps(graph, startId, endId) {
@@ -83,6 +89,7 @@ export function generateDijkstraSteps(graph, startId, endId) {
             effect: `Set dist [${startId}] = 0 because the start node is distance 0 from itself.`, 
         },
         counters: { ...counters },
+        pq: snapshotPQ(pq),
     });
 
     while (pq.length > 0) {
@@ -110,6 +117,7 @@ export function generateDijkstraSteps(graph, startId, endId) {
                 effect: `Node ${current} becomes 'visited' (finalised). We now relax its outgoing edges.`, 
             },
             counters: { ...counters },
+            pq: snapshotPQ(pq),
         });
 
         //early exit if we reached end
@@ -145,8 +153,10 @@ export function generateDijkstraSteps(graph, startId, endId) {
                     effect: `Try ${current} -> ${neighbour}: ${dist[current]} + ${edge.weight} = ${newDist} (current best: ${oldDist === Infinity ? "∞" : oldDist}).`, 
                 },
                 counters: { ...counters },
+                pq: snapshotPQ(pq),
             });
 
+            //push neighbours into queue when a better distance is found
             if (newDist < dist[neighbour]) {
 
                 //successful relaxation
@@ -170,6 +180,7 @@ export function generateDijkstraSteps(graph, startId, endId) {
                         effect: `Accept the new path. ${neighbour} now has distance ${newDist} via ${current}.`, 
                     },
                     counters: { ...counters },
+                    pq: snapshotPQ(pq),
                 });
             } else {
                 //explicit step for failed relaxation
@@ -188,6 +199,7 @@ export function generateDijkstraSteps(graph, startId, endId) {
                         effect: `Reject the new path.  ${newDist} is not better than the current distance ${oldDist}.`, 
                     },
                     counters: { ...counters },
+                    pq: snapshotPQ(pq),
                 });
             }
         }
@@ -202,7 +214,7 @@ export function generateDijkstraSteps(graph, startId, endId) {
         currentNode: endId,
         visited: Array.from(visited),
         frontier: [],
-        frontierWithDist: "null",
+        frontierWithDist: "∅",
         dist: { ...dist },
         prev: { ...prev },
         activeEdge: null, shortestPathNodes, shortestPathEdges,
@@ -216,9 +228,10 @@ export function generateDijkstraSteps(graph, startId, endId) {
                 : {
                     rule: "Terminate",
                     reason: "All reachable nodes have been finalised, but the end node was not reachable.",
-                    effect: `No path exists from ${startId} to ${endid}.`,
+                    effect: `No path exists from ${startId} to ${endId}.`,
                 },
         counters: { ...counters },
+        pq: snapshotPQ(pq),
     });
 
     return steps;
