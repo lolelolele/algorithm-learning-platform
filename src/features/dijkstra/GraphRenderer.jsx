@@ -14,6 +14,50 @@ export default function GraphRenderer({ graph, startId, endId, step }) {
             viewBox="-50 0 900 320"
             className="bg-white"
         >
+
+            <foreignObject x="-50" y="-190" width="150" height="170">
+                <div className="rounded-md border bg-white/90 p-1 text-xs text-gray-700">
+                    <div className="font-semibold mb-2">Legend:</div>
+
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            <span className="inline-block h-3 w-3 rounded-full border" style={{ background: "#dcfce7", borderColor: "#16a34a"}} />
+                            <span>Start</span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <span className="inline-block h-3 w-3 rounded-full border" style={{ background: "#fee2e2", borderColor: "#dc2626"}} />
+                            <span>End</span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <span className="inline-block h-3 w-3 rounded-full border" style={{ background: "#fef9c3", borderColor: "#000000"}} />
+                            <span>Current</span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <span className="inline-block h-3 w-3 rounded-full border" style={{ background: "#e5e7eb", borderColor: "#374151"}} />
+                            <span>Visited</span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <span className="inline-block h-3 w-3 rounded-full border" style={{ background: "#dbeafe", borderColor: "#374151"}} />
+                            <span>Frontier</span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <span className="inline-block h-3 w-3 rounded-full border" style={{ background: "#2563eb" }} />
+                            <span>Shortest Path</span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <span className="inline-block h-3 w-3 rounded-full border" style={{ background: "#111827" }} />
+                            <span>Active Edge</span>
+                        </div>
+                    </div>
+                </div>
+            </foreignObject>
+
             {/*Edges*/}
             {edges.map((edge) => {
                 const from = nodes.find((n) => n.id === edge.from);
@@ -83,26 +127,26 @@ export default function GraphRenderer({ graph, startId, endId, step }) {
                 let stroke = "#111827";
                 let strokeWidth = 3;
 
-                if (isCurrent) {
-                    fill = "#fef9c3";  //light yellow
-                    stroke = "#000000";
-                    strokeWidth = 5;
-                } else if (isStart) {
-                    fill = "#dcfce7";  //light green
+                if (isStart) {
+                    fill = "#dcfce7";
                     stroke = "#16a34a";
                 } else if (isEnd) {
                     fill = "#fee2e2";  //light red
                     stroke = "#dc2626";
+                } else if (isCurrent) {
+                    fill = "#fef9c3";  //light yellow
+                    stroke = "#000000";
+                    strokeWidth = 5;
+                } else if (isOnShortestPath) {
+                    fill = "#dbeafe";  //light red
+                    stroke = "#2563eb";
+                    strokeWidth = 5;
                 } else if (isVisited) {
                     fill = "#e5e7eb";  //light gray
                     stroke = "#374151";
                 } else if (isFrontier) {
                     fill = "#dbeafe";  //light red
                     stroke = "#374151";
-                } else if (isOnShortestPath) {
-                    fill = "#dbeafe";  //light red
-                    stroke = "#2563eb";
-                    strokeWidth = 5;
                 }
                 
                 
