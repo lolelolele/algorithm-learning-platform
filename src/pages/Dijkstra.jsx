@@ -97,7 +97,7 @@ export default function Dijkstra() {
                         <h3 className="font-medium mb-1">Complexity</h3>
                         <ul className="list-disc ml-5 space-y-1 text-gray-600">
                             <li>
-                                <span classname="font-medium">Time:</span> O((V + E) log V) 
+                                <span className="font-medium">Time:</span> O((V + E) log V) 
                             </li>
                             <li>
                                 <span>Space:</span> O(V + E)
@@ -247,7 +247,7 @@ export default function Dijkstra() {
                         <ul className="space-y-1 text-gray-600">
                             <li>Node visits: {currentStep?.counters?.nodeVisits ?? 0}</li>
                             <li>Relax attempts: {currentStep?.counters?.relaxAttempts ?? 0}</li>
-                            <li>Successful relaxtions: {currentStep?.counters?.successfulRelaxations ?? 0}</li>
+                            <li>Successful relaxations: {currentStep?.counters?.successfulRelaxations ?? 0}</li>
                         </ul>
                     </div>
                 </div>
@@ -262,7 +262,7 @@ export default function Dijkstra() {
                     </div>
 
                     {currentStep?.explanationParts ?(
-                        <div className="space-y-2 leading relaxed">
+                        <div className="space-y-2 leading-relaxed">
                             <div>
                                 <span className="font-semibold">Rule: </span>
                                 <span>{currentStep.explanationParts.rule}</span>
@@ -279,7 +279,7 @@ export default function Dijkstra() {
                             </div>
                         </div>
                     ) : (
-                        <p className="leading relaxed">
+                        <p className="leading-relaxed">
                             {currentStep?.explanation ?? "No explanation available for this step yet."}
                         </p>
                     )}
