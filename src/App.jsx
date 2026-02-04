@@ -6,24 +6,29 @@ import Placeholder from "./pages/Placeholder";
 
 export default function App() {
   return (
+
+    /* BrowserRouter enables client-side routing without full page reloads */
     <BrowserRouter>
       <Navbar />
+
+      {/* Route table for the application */}
       <Routes>
+        {/* Home Page */}
         <Route path="/" element={<Home />} />
 
-        {/* Graph Pathfinding */}
+        {/* Graph Pathfinding pages */}
         <Route path="/dijkstra" element={<Dijkstra />} />
         <Route path="/a-star" element={<Placeholder />} />
         <Route path="/bfs" element={<Placeholder />} />
         <Route path="/dfs" element={<Placeholder />} />
 
-        {/* Sorting */}
+        {/* Sorting pages */}
         <Route path="/sorting/bubble" element={<Placeholder />} />
         <Route path="/sorting/merge" element={<Placeholder />} />
         <Route path="/sorting/quick" element={<Placeholder />} />
         <Route path="/sorting/heap" element={<Placeholder />} />
 
-        {/* BST */}
+        {/* BST pages */}
         <Route path="/bst/search" element={<Placeholder />} />
         <Route path="/bst/insert" element={<Placeholder />} />
         <Route path="/bst/delete" element={<Placeholder />} />

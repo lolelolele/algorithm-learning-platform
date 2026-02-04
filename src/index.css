@@ -1,3 +1,10 @@
+/*
+Tailwind CSS layers:
+    - base: browser resets + base typography
+    - components: reusable component classes
+    - utilities: tailwind utility classes used throughout the UI
+*/
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

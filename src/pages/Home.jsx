@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 
 export default function Home() {
     return (
+        // home page provides an overview and shows the project scope
         <div className="h-[calc(100vh-80px)] bg-gray-50 flex flex-col overflow-hidden">
             <main className="flex-1 w-full max-w-full px-8 py-6 flex flex-col gap-6 min-h-0">
 

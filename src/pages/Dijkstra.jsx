@@ -3,6 +3,8 @@ import AlgorithmLayout from "../components/AlgorithmLayout";
 import GraphRenderer from "../features/dijkstra/GraphRenderer";
 import { defaultGraph, templates } from "../features/dijkstra/data/graphs";
 import { generateDijkstraSteps } from "../features/dijkstra/logic/dijkstraSteps";
+
+// ui icons for playback controls
 import playIcon from "../assets/icons/play.png";
 import pauseIcon from "../assets/icons/pause.png";
 import stepForwardIcon from "../assets/icons/step_forward.png";
@@ -12,21 +14,34 @@ import resetIcon from "../assets/icons/reset.png";
 
 export default function Dijkstra() {
 
+    /* Graph configuration:
+        - graph: current graph data
+        - selectedTemplateId: which template is currently active */
     const [graph, setGraph] = useState(defaultGraph);
     const [selectedTemplateId, setSelectedTemplateId] = useState("custom");
 
+    /* Algorithm state:
+        - startId: current source node chosen by the user
+        - endId: target node chosen by user
+        - stepIndex: current playback position in the step sequence */
     const [startId, setStartId] = useState(graph.startId);
     const [endId, setEndId] = useState(graph.endId);
     const [stepIndex, setStepIndex] = useState(0);
 
+    /* step-by-step execution trace for the current graph and endpoints */
     const steps = generateDijkstraSteps(graph, startId, endId);
+    
+    /* prevents out of range access if the steps array shrinks after changing graph */
     const safeStepIndex = Math.min(stepIndex, steps.length - 1);
     const currentStep = steps[safeStepIndex];
 
+    /* Playback controls:
+        - isPlaying: whether autoplay is running
+        - speed: playback speed multipler */
     const [isPlaying, setIsPlaying] = useState(false);
     const [speed, setSpeed] = useState(1);
 
-
+    /* if the start/end changes -> reset playback */
     useEffect(() => {
         setIsPlaying(false);
         setStepIndex(0);
@@ -45,6 +60,7 @@ export default function Dijkstra() {
             setStepIndex((i) => Math.min(i + 1, steps.length - 1));
         }, 700/speed);
 
+        // prevents multiple timers and memory leaks
         return () => clearTimeout(timer);
     }, [isPlaying, speed, safeStepIndex, steps.length]);
 
@@ -64,6 +80,7 @@ export default function Dijkstra() {
                             </p>
                     </div>
 
+                    {/* steps on how dijkstra works */}
                     <div>
                         <h3 className="font-medium mb-1">How it works</h3>
                         <ul className="list-disc ml-5 space-y-1 text-gray-600">
@@ -90,6 +107,7 @@ export default function Dijkstra() {
                 </div>
             }
 
+            /* supports template switching and selcting start/end nodes */
             graphEditor={
                 <div className="space-y-4 text-sm">
 
@@ -103,14 +121,17 @@ export default function Dijkstra() {
                                 const value = e.target.value;
                                 setSelectedTemplateId(value);
 
+                                //stop autoplay and reset to keep state consistent after data changes
                                 setIsPlaying(false);
                                 setStepIndex(0);
 
+                                //resets to default graph configuration
                                 if (value === "custom") {
                                     setGraph(defaultGraph);
                                     setStartId(defaultGraph.startId);
                                     setEndId(defaultGraph.endId);
                                 } else {
+                                    //load a template by id
                                     const selected = templates.find(t => t.id ===value);
                                     if (selected) {
                                         setGraph(selected);
@@ -123,6 +144,7 @@ export default function Dijkstra() {
                         >
                             <option value="custom">Custom (Default)</option>
 
+                            {/* group templates selection */}
                             <optgroup label="Simple">
                                 {templates
                                     .filter(t => t.category === "Simple")
@@ -156,6 +178,7 @@ export default function Dijkstra() {
                         </select>
                     </div>
 
+                    {/* start node selector */}
                     <div>
                         <label className="block font-medium mb-1">Start Node:</label>
                         <select
@@ -171,6 +194,7 @@ export default function Dijkstra() {
                         </select>
                     </div>
 
+                    {/* end node selector */}
                     <div>
                         <label className="block font-medium mb-1">End Node:</label>
                         <select
@@ -188,6 +212,7 @@ export default function Dijkstra() {
                 </div>
             }
 
+            /* GraphRender draws the graph and highlights algorithm state for the current step */
             visualisation={
                 <GraphRenderer 
                     graph={graph} 
@@ -197,11 +222,13 @@ export default function Dijkstra() {
                 />
             }
 
+            /* showcases internal state (frontier & counters) e*/
             metrics={
                 <div className="text-sm text-gray-700 space-y-3">
                     <div>
                         <h3 className="font-medium mb-2">Frontier</h3>
 
+                        {/* displays the current frontier snapshot with the node and its distances */}
                         <div className="rounded-md border bg-white p-2 text-gray-700">
                             {currentStep?.pq?.length
                                 ? currentStep.pq
@@ -226,6 +253,7 @@ export default function Dijkstra() {
                 </div>
             }
 
+            /* displays algorithm explanation step-by step includes rule, reason and the effect */
             whyThisStep={
                 <div className="text-sm text-gray-700 space-y-3">
                     <div className="text-xs text-gray-500 space-y-1">
@@ -258,13 +286,17 @@ export default function Dijkstra() {
                 </div>
             }
 
+            /* playback controls includes:
+                - manual stepping (forward/backwards)
+                - autoplay
+                - speed slider (0.25x-2x) */
             controls={
 
                 <div className="flex items-center justify-between gap-4">
                     
                     {/*Left control panel buttons*/}
                     <div className="flex items-center gap-2">
-                        {/*Step Backwards button*/}
+                        {/*Step Backwards button, disabled at the first step*/}
                         <button
                             type="button"
                             title="Step Backward"
@@ -299,7 +331,7 @@ export default function Dijkstra() {
                             />
                         </button>
 
-                        {/*Step Forward button*/}
+                        {/*Step Forward button, disabled at the final step*/}
                         <button
                             type="button"
                             title="Step Forward"
@@ -318,7 +350,7 @@ export default function Dijkstra() {
                             />
                         </button>
 
-                        {/*Reset button*/}
+                        {/*Reset button to step 0*/}
                         <button
                             type="button"
                             title="Reset"
@@ -354,7 +386,7 @@ export default function Dijkstra() {
                         <span className="text-xs text-gray-500">{speed}x</span>
                     </div>
 
-                    {/*Right control panel: step counter*/}
+                    {/*Right control panel: progress indicator (step/total steps)*/}
                     <div className="text-gray-700">
                         Step: {safeStepIndex + 1} / {steps.length}
                     </div>

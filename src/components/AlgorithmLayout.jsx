@@ -1,3 +1,5 @@
+/*  reuable page layout for algo visualisations to ensure consistent layout for all algorithm implementations*/
+
 export default function AlgorithmLayout({
     title,
     algoInfo,
@@ -6,9 +8,9 @@ export default function AlgorithmLayout({
     controls,
     graphEditor,
     whyThisStep,
-    metricsControls
 }) {
     return (
+        /* full height layout minus navbar height (80px) */
         <div className="h-[calc(100vh-80px)] bg-gray-50 flex flex-col overflow-hidden">
 
             {/*Main content area*/}

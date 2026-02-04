@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 
 export default function Placeholder() {
+    /* reads current route so the placeholder can diplay which page is under development */
     const location = useLocation();
 
     return (

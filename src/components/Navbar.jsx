@@ -4,6 +4,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+/* single navigation link with active state styling */
 function NavItem({ to, children }) {
   return (
     <NavLink
@@ -20,6 +21,7 @@ function NavItem({ to, children }) {
   );
 }
 
+/* hover dropdown for grouped navigation items */
 function Dropdown({ label, items }) {
   return (
     <div className="relative group">
@@ -67,6 +69,7 @@ export default function Navbar() {
   ];
 
   return (
+    /* header remains consistent across the entire platform */
     <header className="border-b bg-white">
       <div className="mx-auto flex max-w-full items-center justify-between px-20 py-4">
 

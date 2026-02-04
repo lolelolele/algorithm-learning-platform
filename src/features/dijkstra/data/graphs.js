@@ -24,6 +24,7 @@ export const defaultGraph = {
     endId: "F",
 };
 
+/* preset graph template grouped by density and difficulty levels */
 export const templates = [
     {
         id: "simple-1",
@@ -295,5 +296,5 @@ export const templates = [
     },
 ];
 
-//helper to group templates later
+/* helper constant to group templates in UI */
 export const templateCategories =  ["Simple", "Medium", "Dense"];

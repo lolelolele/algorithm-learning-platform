@@ -1,23 +1,26 @@
+/* reconstructs the shortest path as a list of node ids by following the prev pointers */
 function reconstructPathNodes(prev, startId, endId) {
-    //return empty path if the end is unreachable
+    /* return empty path if the end is unreachable */
     if (endId !== startId && prev[endId] == null) return [];
 
     const path = [];
     let current = endId;
 
-    //walk backwards using previous pointers
+    /* walk backwards from end to start using previous pointers */
     while (current != null) {
         path.push(current);
         if (current === startId) break;
         current = prev[current];
     }
 
-    //if start is never reached, it is unreachable
+    /* if we never reached the start it is unreachable */
     if (path[path.length - 1] !== startId) return [];
 
     return path.reverse();
 }
 
+/* converts a path expressed as nodes into a list of edge ids for highlighting */
+/* assumes undirected edges */
 function pathNodesToEdgeIds(pathNodes, edges) {
     const edgeIds = [];
 
@@ -25,6 +28,7 @@ function pathNodesToEdgeIds(pathNodes, edges) {
         const a = pathNodes[i];
         const b = pathNodes[i + 1];
 
+        /* locate the matching edge for this node pair */
         const e = edges.find(
             (edge) =>
                 (edge.from === a && edge.to === b) || (edge.from === b && edge.to === a)
@@ -35,6 +39,7 @@ function pathNodesToEdgeIds(pathNodes, edges) {
     return edgeIds;
 }
 
+/* formats a readable frontier string for UI display (id(dist), id(dist)...) */
 function formatFrontier(pq) {
     if (!pq || pq.length === 0) return "∅";
     
@@ -42,38 +47,49 @@ function formatFrontier(pq) {
     return copy.map((n) => `${n.id}(${n.dist})`).join(", ");
 }
 
+/* produces a stable snapshot of the queue for the metrics panel */
 function snapshotPQ(pq) {
     return[...pq]
         .sort((a, b) => a.dist - b.dist)
         .map((x) => ({ id: x.id, dist:x.dist }));
 }
 
+/* generates a full step-by-step trace of dijkstra's algorithm for visual playback */
 export function generateDijkstraSteps(graph, startId, endId) {
     const steps = [];
 
+    /* extract node ids and edges from the graph model */
     const nodes = graph.nodes.map((n) => n.id);
     const edges = graph.edges;
 
+    /* dist -> best known distances from the start
+       prev -> predecessor pointers for path reconstruction */
     const dist = {};
     const prev = {};
+
+    /* visited -> finalised nodes */
     const visited = new Set();
+
+    /* counters provide observable complexity signals in the UI */
     const counters = {
         nodeVisits: 0,
         relaxAttempts: 0,
         successfulRelaxations: 0,
     };
 
-    //initialise distances
+    /* initialise all distances fto infinity, except start at 0 */
     nodes.forEach((id) => {
         dist[id] = Infinity;
         prev[id] = null;
     });
     dist[startId] = 0;
 
-    //priority queue (simple array)
+    /* priority queue */
+    /* this prototype uses a simple array and sorts it each iteration */
     let pq = [{ id: startId, dist: 0}];
 
-    //initial step
+    /* initial UI step
+        - shows the starting state before any node is processed */
     steps.push({
         phase: "init",
         currentNode: null,
@@ -93,7 +109,7 @@ export function generateDijkstraSteps(graph, startId, endId) {
     });
 
     while (pq.length > 0) {
-        //pick node with smallest distance
+        /* sorts by distance and removes the smallest element */
         pq.sort((a, b) => a.dist - b.dist);
         const { id: current } = pq.shift();
 
@@ -120,10 +136,9 @@ export function generateDijkstraSteps(graph, startId, endId) {
             pq: snapshotPQ(pq),
         });
 
-        //early exit if we reached end
+        //early exit once target node is finalised
         if (current === endId) break;
 
-        //relax outgoing edges
         const outgoing = edges.filter(
             (e) => e.from === current || e.to === current
         );
@@ -131,6 +146,7 @@ export function generateDijkstraSteps(graph, startId, endId) {
         for(const edge of outgoing) {
             const neighbour = edge.from === current ? edge.to : edge.from;
             
+            /* skip neighbouts already finalised */
             if (visited.has(neighbour)) continue;
         
             counters.relaxAttempts++;
@@ -138,6 +154,7 @@ export function generateDijkstraSteps(graph, startId, endId) {
             const oldDist = dist[neighbour];
             const newDist = dist[current] + edge.weight;
 
+            /* steps to show the relaxation calculation before the final processing*/
             steps.push({
                 phase: "relax-edge",
                 currentNode: current,
@@ -156,7 +173,9 @@ export function generateDijkstraSteps(graph, startId, endId) {
                 pq: snapshotPQ(pq),
             });
 
-            //push neighbours into queue when a better distance is found
+            /* if a shorter path is found:
+                - update dist and prev 
+                - add the neighbour to the frontier */
             if (newDist < dist[neighbour]) {
 
                 //successful relaxation
@@ -205,10 +224,11 @@ export function generateDijkstraSteps(graph, startId, endId) {
         }
     }
 
+    /* once loop has ended the final shortest path is reconstructed  (if reachable) */
     const shortestPathNodes = reconstructPathNodes(prev, startId, endId);
     const shortestPathEdges = pathNodesToEdgeIds(shortestPathNodes, edges);
 
-    //final step
+    /* final step that highlights result path or explicity indicates no path */
     steps.push({
         phase: "final",
         currentNode: endId,
